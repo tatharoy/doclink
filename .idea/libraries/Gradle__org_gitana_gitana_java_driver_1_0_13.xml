@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.gitana:gitana-java-driver:1.0.13">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.gitana/gitana-java-driver/1.0.13/ac86549d23099b27926ed98211a79be628bde5f2/gitana-java-driver-1.0.13.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.gitana/gitana-java-driver/1.0.13/66202c8b59cc966b3d00f7653ae99bb4648eb668/gitana-java-driver-1.0.13-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

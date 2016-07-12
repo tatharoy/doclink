@@ -1,0 +1,171 @@
+
+------------------------------------------------------------
+Root project
+------------------------------------------------------------
+
+compile - Dependencies for source set 'main'.
++--- org.gitana:gitana-java-driver:1.0.13
+|    \--- org.gitana:gitana-objects:1.0.0-SNAPSHOT
+|         +--- org.gitana:gitana-core:1.0.0-SNAPSHOT
+|         |    +--- com.fasterxml.jackson.core:jackson-core:2.6.1 -> 2.6.6
+|         |    +--- com.fasterxml.jackson.core:jackson-annotations:2.6.1 -> 2.6.6
+|         |    +--- com.fasterxml.jackson.core:jackson-databind:2.6.1 -> 2.6.6
+|         |    |    +--- com.fasterxml.jackson.core:jackson-annotations:2.6.0 -> 2.6.6
+|         |    |    \--- com.fasterxml.jackson.core:jackson-core:2.6.6
+|         |    +--- com.fasterxml.jackson.module:jackson-module-scala_2.11:2.6.1
+|         |    |    +--- org.scala-lang:scala-library:2.11.7
+|         |    |    +--- org.scala-lang:scala-reflect:2.11.7
+|         |    |    |    \--- org.scala-lang:scala-library:2.11.7
+|         |    |    +--- com.fasterxml.jackson.core:jackson-core:2.6.1 -> 2.6.6
+|         |    |    +--- com.fasterxml.jackson.core:jackson-annotations:2.6.1 -> 2.6.6
+|         |    |    +--- com.fasterxml.jackson.core:jackson-databind:2.6.1 -> 2.6.6 (*)
+|         |    |    \--- com.fasterxml.jackson.module:jackson-module-paranamer:2.6.1
+|         |    |         +--- com.fasterxml.jackson.core:jackson-databind:2.6.1 -> 2.6.6 (*)
+|         |    |         \--- com.thoughtworks.paranamer:paranamer:2.6
+|         |    +--- org.apache.httpcomponents:httpclient:4.3.2 -> 4.5.2
+|         |    |    +--- org.apache.httpcomponents:httpcore:4.4.4
+|         |    |    +--- commons-logging:commons-logging:1.2
+|         |    |    \--- commons-codec:commons-codec:1.9
+|         |    +--- org.apache.httpcomponents:httpcore:4.3.2 -> 4.4.4
+|         |    +--- org.apache.httpcomponents:httpmime:4.3.2 -> 4.5.2
+|         |    |    \--- org.apache.httpcomponents:httpclient:4.5.2 (*)
+|         |    +--- commons-lang:commons-lang:2.6
+|         |    +--- org.springframework:spring-core:4.2.3.RELEASE -> 4.2.6.RELEASE
+|         |    |    \--- commons-logging:commons-logging:1.2
+|         |    +--- org.springframework:spring-beans:4.2.3.RELEASE -> 4.2.6.RELEASE
+|         |    |    \--- org.springframework:spring-core:4.2.6.RELEASE (*)
+|         |    +--- commons-logging:commons-logging:1.1.1 -> 1.2
+|         |    +--- com.google.oauth-client:google-oauth-client:1.19.0
+|         |    |    +--- com.google.http-client:google-http-client:1.19.0
+|         |    |    |    +--- com.google.code.findbugs:jsr305:1.3.9
+|         |    |    |    \--- org.apache.httpcomponents:httpclient:4.0.1 -> 4.5.2 (*)
+|         |    |    \--- com.google.code.findbugs:jsr305:1.3.9
+|         |    +--- com.google.http-client:google-http-client-jackson2:1.19.0
+|         |    |    +--- com.google.http-client:google-http-client:1.19.0 (*)
+|         |    |    \--- com.fasterxml.jackson.core:jackson-core:2.1.3 -> 2.6.6
+|         |    +--- com.nebhale.jsonpath:jsonpath:1.2
+|         |    |    \--- com.fasterxml.jackson.core:jackson-databind:2.1.2 -> 2.6.6 (*)
+|         |    +--- org.apache.logging.log4j:log4j-api:2.3 -> 2.4.1
+|         |    +--- org.apache.logging.log4j:log4j-core:2.3 -> 2.4.1
+|         |    |    \--- org.apache.logging.log4j:log4j-api:2.4.1
+|         |    +--- org.apache.logging.log4j:log4j-1.2-api:2.3
+|         |    |    +--- org.apache.logging.log4j:log4j-api:2.3 -> 2.4.1
+|         |    |    \--- org.apache.logging.log4j:log4j-core:2.3 -> 2.4.1 (*)
+|         |    \--- org.apache.logging.log4j:log4j-slf4j-impl:2.3 -> 2.4.1
+|         |         +--- org.slf4j:slf4j-api:1.7.12 -> 1.7.21
+|         |         \--- org.apache.logging.log4j:log4j-api:2.4.1
+|         +--- org.apache.logging.log4j:log4j-api:2.3 -> 2.4.1
+|         +--- org.apache.logging.log4j:log4j-core:2.3 -> 2.4.1 (*)
+|         +--- org.apache.logging.log4j:log4j-1.2-api:2.3 (*)
+|         \--- org.apache.logging.log4j:log4j-slf4j-impl:2.3 -> 2.4.1 (*)
++--- org.gitana:gitana-java-driver: -> 1.0.13 (*)
++--- org.springframework.boot:spring-boot-starter-web: -> 1.3.5.RELEASE
+|    +--- org.springframework.boot:spring-boot-starter:1.3.5.RELEASE
+|    |    +--- org.springframework.boot:spring-boot:1.3.5.RELEASE
+|    |    |    +--- org.springframework:spring-core:4.2.6.RELEASE (*)
+|    |    |    \--- org.springframework:spring-context:4.2.6.RELEASE
+|    |    |         +--- org.springframework:spring-aop:4.2.6.RELEASE
+|    |    |         |    +--- aopalliance:aopalliance:1.0
+|    |    |         |    +--- org.springframework:spring-beans:4.2.6.RELEASE (*)
+|    |    |         |    \--- org.springframework:spring-core:4.2.6.RELEASE (*)
+|    |    |         +--- org.springframework:spring-beans:4.2.6.RELEASE (*)
+|    |    |         +--- org.springframework:spring-core:4.2.6.RELEASE (*)
+|    |    |         \--- org.springframework:spring-expression:4.2.6.RELEASE
+|    |    |              \--- org.springframework:spring-core:4.2.6.RELEASE (*)
+|    |    +--- org.springframework.boot:spring-boot-autoconfigure:1.3.5.RELEASE
+|    |    |    \--- org.springframework.boot:spring-boot:1.3.5.RELEASE (*)
+|    |    +--- org.springframework.boot:spring-boot-starter-logging:1.3.5.RELEASE
+|    |    |    +--- ch.qos.logback:logback-classic:1.1.7
+|    |    |    |    +--- ch.qos.logback:logback-core:1.1.7
+|    |    |    |    \--- org.slf4j:slf4j-api:1.7.20 -> 1.7.21
+|    |    |    +--- org.slf4j:jcl-over-slf4j:1.7.21
+|    |    |    |    \--- org.slf4j:slf4j-api:1.7.21
+|    |    |    +--- org.slf4j:jul-to-slf4j:1.7.21
+|    |    |    |    \--- org.slf4j:slf4j-api:1.7.21
+|    |    |    \--- org.slf4j:log4j-over-slf4j:1.7.21
+|    |    |         \--- org.slf4j:slf4j-api:1.7.21
+|    |    +--- org.springframework:spring-core:4.2.6.RELEASE (*)
+|    |    \--- org.yaml:snakeyaml:1.16
+|    +--- org.springframework.boot:spring-boot-starter-tomcat:1.3.5.RELEASE
+|    |    +--- org.apache.tomcat.embed:tomcat-embed-core:8.0.33
+|    |    +--- org.apache.tomcat.embed:tomcat-embed-el:8.0.33
+|    |    +--- org.apache.tomcat.embed:tomcat-embed-logging-juli:8.0.33
+|    |    \--- org.apache.tomcat.embed:tomcat-embed-websocket:8.0.33
+|    |         \--- org.apache.tomcat.embed:tomcat-embed-core:8.0.33
+|    +--- org.springframework.boot:spring-boot-starter-validation:1.3.5.RELEASE
+|    |    +--- org.springframework.boot:spring-boot-starter:1.3.5.RELEASE (*)
+|    |    +--- org.apache.tomcat.embed:tomcat-embed-el:8.0.33
+|    |    \--- org.hibernate:hibernate-validator:5.2.4.Final
+|    |         +--- javax.validation:validation-api:1.1.0.Final
+|    |         +--- org.jboss.logging:jboss-logging:3.2.1.Final -> 3.3.0.Final
+|    |         \--- com.fasterxml:classmate:1.1.0
+|    +--- com.fasterxml.jackson.core:jackson-databind:2.6.6 (*)
+|    +--- org.springframework:spring-web:4.2.6.RELEASE
+|    |    +--- org.springframework:spring-aop:4.2.6.RELEASE (*)
+|    |    +--- org.springframework:spring-beans:4.2.6.RELEASE (*)
+|    |    +--- org.springframework:spring-context:4.2.6.RELEASE (*)
+|    |    \--- org.springframework:spring-core:4.2.6.RELEASE (*)
+|    \--- org.springframework:spring-webmvc:4.2.6.RELEASE
+|         +--- org.springframework:spring-beans:4.2.6.RELEASE (*)
+|         +--- org.springframework:spring-context:4.2.6.RELEASE (*)
+|         +--- org.springframework:spring-core:4.2.6.RELEASE (*)
+|         +--- org.springframework:spring-expression:4.2.6.RELEASE (*)
+|         \--- org.springframework:spring-web:4.2.6.RELEASE (*)
+\--- org.springframework.boot:spring-boot-starter-data-jpa: -> 1.3.5.RELEASE
+     +--- org.springframework.boot:spring-boot-starter:1.3.5.RELEASE (*)
+     +--- org.springframework.boot:spring-boot-starter-aop:1.3.5.RELEASE
+     |    +--- org.springframework.boot:spring-boot-starter:1.3.5.RELEASE (*)
+     |    +--- org.springframework:spring-aop:4.2.6.RELEASE (*)
+     |    \--- org.aspectj:aspectjweaver:1.8.9
+     +--- org.springframework.boot:spring-boot-starter-jdbc:1.3.5.RELEASE
+     |    +--- org.springframework.boot:spring-boot-starter:1.3.5.RELEASE (*)
+     |    +--- org.apache.tomcat:tomcat-jdbc:8.0.33
+     |    |    \--- org.apache.tomcat:tomcat-juli:8.0.33
+     |    \--- org.springframework:spring-jdbc:4.2.6.RELEASE
+     |         +--- org.springframework:spring-beans:4.2.6.RELEASE (*)
+     |         +--- org.springframework:spring-core:4.2.6.RELEASE (*)
+     |         \--- org.springframework:spring-tx:4.2.6.RELEASE
+     |              +--- org.springframework:spring-beans:4.2.6.RELEASE (*)
+     |              \--- org.springframework:spring-core:4.2.6.RELEASE (*)
+     +--- org.hibernate:hibernate-entitymanager:4.3.11.Final
+     |    +--- org.jboss.logging:jboss-logging:3.1.3.GA -> 3.3.0.Final
+     |    +--- org.jboss.logging:jboss-logging-annotations:1.2.0.Beta1
+     |    +--- org.hibernate:hibernate-core:4.3.11.Final
+     |    |    +--- org.jboss.logging:jboss-logging:3.1.3.GA -> 3.3.0.Final
+     |    |    +--- org.jboss.logging:jboss-logging-annotations:1.2.0.Beta1
+     |    |    +--- dom4j:dom4j:1.6.1
+     |    |    |    \--- xml-apis:xml-apis:1.0.b2
+     |    |    +--- org.hibernate.common:hibernate-commons-annotations:4.0.5.Final
+     |    |    |    +--- org.jboss.logging:jboss-logging:3.1.3.GA -> 3.3.0.Final
+     |    |    |    \--- org.jboss.logging:jboss-logging-annotations:1.2.0.Beta1
+     |    |    +--- org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final
+     |    |    +--- org.javassist:javassist:3.18.1-GA
+     |    |    +--- antlr:antlr:2.7.7
+     |    |    \--- org.jboss:jandex:1.1.0.Final
+     |    +--- dom4j:dom4j:1.6.1 (*)
+     |    +--- org.hibernate.common:hibernate-commons-annotations:4.0.5.Final (*)
+     |    +--- org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final
+     |    \--- org.javassist:javassist:3.18.1-GA
+     +--- javax.transaction:javax.transaction-api:1.2
+     +--- org.springframework.data:spring-data-jpa:1.9.4.RELEASE
+     |    +--- org.springframework.data:spring-data-commons:1.11.4.RELEASE
+     |    |    +--- org.springframework:spring-core:4.1.9.RELEASE -> 4.2.6.RELEASE (*)
+     |    |    +--- org.springframework:spring-beans:4.1.9.RELEASE -> 4.2.6.RELEASE (*)
+     |    |    +--- org.slf4j:slf4j-api:1.7.13 -> 1.7.21
+     |    |    \--- org.slf4j:jcl-over-slf4j:1.7.13 -> 1.7.21 (*)
+     |    +--- org.springframework:spring-orm:4.1.9.RELEASE -> 4.2.6.RELEASE
+     |    |    +--- org.springframework:spring-beans:4.2.6.RELEASE (*)
+     |    |    +--- org.springframework:spring-core:4.2.6.RELEASE (*)
+     |    |    +--- org.springframework:spring-jdbc:4.2.6.RELEASE (*)
+     |    |    \--- org.springframework:spring-tx:4.2.6.RELEASE (*)
+     |    +--- org.springframework:spring-context:4.1.9.RELEASE -> 4.2.6.RELEASE (*)
+     |    +--- org.springframework:spring-aop:4.1.9.RELEASE -> 4.2.6.RELEASE (*)
+     |    +--- org.springframework:spring-tx:4.1.9.RELEASE -> 4.2.6.RELEASE (*)
+     |    +--- org.springframework:spring-beans:4.1.9.RELEASE -> 4.2.6.RELEASE (*)
+     |    +--- org.springframework:spring-core:4.1.9.RELEASE -> 4.2.6.RELEASE (*)
+     |    +--- org.slf4j:slf4j-api:1.7.13 -> 1.7.21
+     |    \--- org.slf4j:jcl-over-slf4j:1.7.13 -> 1.7.21 (*)
+     \--- org.springframework:spring-aspects:4.2.6.RELEASE
+          \--- org.aspectj:aspectjweaver:1.8.9
+
+(*) - dependencies omitted (listed previously)
