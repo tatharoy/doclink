@@ -1,21 +1,12 @@
 package com.davita;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.gitana.platform.client.Gitana;
-import org.gitana.platform.client.branch.Branch;
-import org.gitana.platform.client.node.Node;
-import org.gitana.platform.client.platform.Platform;
-import org.gitana.platform.client.repository.Repository;
-import org.gitana.platform.support.Pagination;
-import org.gitana.platform.support.QueryBuilder;
-import org.gitana.platform.support.ResultMap;
-import org.gitana.platform.support.Sorting;
-import org.gitana.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +17,6 @@ import java.util.List;
 @RestController
 @RequestMapping("users")
 public class UserController {
-
-    private static final String PARAM_USER_FNAME = "fname";
-    private static final String PARAM_USER_LNAME= "lname";
 
     private static final String USER_ID_VALIDATION_ERROR = "Invalid userId provided: ";
     private static final String USER_ID_DUP_ERROR = "UserId already provisioned in system: ";
@@ -41,9 +29,9 @@ public class UserController {
     private UserRepository userRepository;
 
     @RequestMapping("")
-    public List<User> getUsers() {
+    public ResponseEntity<List<User>> getUsers() {
 
-        List<User> userList = new ArrayList<User>();
+        List<User> userList = new ArrayList<>();
 
         Iterable<User> users = userRepository.findAll();
 
@@ -51,129 +39,106 @@ public class UserController {
             userList.add(user);
         }
 
-        return userList;
+        return new ResponseEntity<>(userList, HttpStatus.OK);
     }
 
 
     @RequestMapping("{userId}")
-    public User getUser(@PathVariable String userId) {
+    public ResponseEntity<User> getUser(@PathVariable String userId) {
 
-        User user = userRepository.findByUid(userId);
+        User user = userRepository.findByUid(userId).orElseThrow(() ->
+                new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId));
 
-        if (user == null) {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
-        }
-
-        return user;
+        return new ResponseEntity<>(user, HttpStatus.FOUND);
     }
 
 
     @RequestMapping("{userId}/readArticles")
     public List<String> readArticles(@PathVariable String userId) {
 
-        List<String> readArticles;
+        User user = userRepository.findByUid(userId).orElseThrow(() ->
+                new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId));
 
-        User user = userRepository.findByUid(userId);
-
-        if (user != null) {
-            readArticles = user.getReadArticles();
-        } else {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
-        }
-
-        return readArticles;
+        return user.getReadArticles();
     }
 
 
     @RequestMapping(value = "{userId}/readArticles/{contentId}", method = RequestMethod.POST)
-    public void readArticles(@PathVariable String userId, @PathVariable String contentId) {
+    public ResponseEntity readArticles(@PathVariable String userId, @PathVariable String contentId) {
 
         Content content = contentRepository.findOne(contentId);
 
         if (content != null) {
 
-            User user = userRepository.findByUid(userId);
+            User user = userRepository.findByUid(userId).orElseThrow(() ->
+                    new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId));
 
-            if (user != null) {
-                user.addReadContent(content.getId());
-                userRepository.save(user);
-            } else {
-                throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
-            }
+            user.addReadContent(content.getId());
+            userRepository.save(user);
         } else {
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, CONTENT_ID_VALIDATION_ERROR + contentId);
         }
+
+        return new ResponseEntity<String>(HttpStatus.CREATED);
     }
 
 
     @RequestMapping("{userId}/likedArticles")
-    public List<String> likedArticles(@PathVariable String userId) {
+    public ResponseEntity<List<String>> likedArticles(@PathVariable String userId) {
 
-        StringBuilder response = new StringBuilder();
-        List<String> likedArticles = new ArrayList<String>();
+        User user = userRepository.findByUid(userId).orElseThrow(() ->
+                new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId));
 
-        User user = userRepository.findByUid(userId);
-
-        if (user != null) {
-//            List<Content> likedArticles = user.getLikedArticles();
-            likedArticles = user.getLikedArticles();
-
-//            for (Content content : likedArticles) {
-//                response.append(content.toString());
-//            }
-        }
-
-//        return (userId + " liked the following articles: " + response.toString());
-        return likedArticles;
+        return new ResponseEntity<>(user.getLikedArticles(), HttpStatus.FOUND);
     }
 
 
     @RequestMapping(value = "{userId}/likedArticles/{contentId}", method = RequestMethod.POST)
-    public void likeArticles(@PathVariable String userId, @PathVariable String contentId) {
+    public ResponseEntity likeArticles(@PathVariable String userId, @PathVariable String contentId) {
 
         Content content = contentRepository.findOne(contentId);
 
         if (content != null) {
 
-            User user = userRepository.findByUid(userId);
+            User user = userRepository.findByUid(userId).orElseThrow(() ->
+                    new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId));
 
-            if (user != null) {
-                user.addlikedContent(content.getId());
-                userRepository.save(user);
-            } else {
-                throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
-            }
+            user.addlikedContent(content.getId());
+            userRepository.save(user);
         } else {
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, CONTENT_ID_VALIDATION_ERROR + contentId);
         }
+
+        return new ResponseEntity<String>(HttpStatus.CREATED);
     }
 
 
-    @RequestMapping(value = "{userId}", method = RequestMethod.POST)
-    public void createUser(@PathVariable String userId,
-                           @RequestParam(value=PARAM_USER_FNAME) String fname,
-                           @RequestParam(value=PARAM_USER_LNAME) String lname) {
+    @RequestMapping(method = RequestMethod.POST)
+    public ResponseEntity createUser(@RequestBody User user) {
 
-        User user = userRepository.findByUid(userId);
-
-        if (user != null) {
-            throw new HttpClientErrorException(HttpStatus.CONFLICT, USER_ID_DUP_ERROR + userId);
+        if (userRepository.findByUid(user.getUid()).isPresent()) {
+            throw new HttpClientErrorException(HttpStatus.CONFLICT, USER_ID_DUP_ERROR + user.getUid());
         } else {
-            userRepository.save(new User(userId, fname + " " + lname));
+            userRepository.save(user);
         }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{id}")
+                .buildAndExpand(user.getUid()).toUri());
+
+        return new ResponseEntity<String>(null, headers, HttpStatus.CREATED);
     }
 
 
     @RequestMapping(value = "{userId}", method = RequestMethod.DELETE)
-    public void deleteUser(@PathVariable String userId) {
+    public ResponseEntity deleteUser(@PathVariable String userId) {
 
-        User user = userRepository.findByUid(userId);
+        User user = userRepository.findByUid(userId).orElseThrow(() ->
+                new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId));
 
-        if (user != null) {
-            userRepository.delete(user);
-        } else {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
-        }
+        userRepository.delete(user);
+
+        return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
     }
-
 }

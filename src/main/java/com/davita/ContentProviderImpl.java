@@ -19,6 +19,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by kmasood on 7/11/16.
@@ -94,6 +95,11 @@ public class ContentProviderImpl implements ContentProvider {
         // I hate doing this but I have to!!! ugh
         createCaaSConnction();
 
+        // Assign default values for nulls
+        if (clientRole == null) { clientRole = PARAM_USER_ROLE_ALL; }
+        if (clientPlatform == null) { clientPlatform = PARAM_PLATFORM_ALL; }
+        if (contentType == null) { contentType = CONTENT_NEED_TO_KNOW_CODE; }
+
         String contentTypeCode;
 
         if (contentType.equals(PARAM_CONTENT_PHYS_MEMO)) {
@@ -122,10 +128,12 @@ public class ContentProviderImpl implements ContentProvider {
             userRoleCode = PARAM_USER_ROLE_ALL;
         }
 
-        if (clientRole != null && !clientRole.isEmpty()) {
+        if (!userRoleCode.equals(PARAM_DEFAULT_USER_ROLE)) {
             qb.or(createNode("targetUser", userRoleCode),
                     createNode("targetUser", PARAM_DEFAULT_USER_ROLE),
                     createNode("targetUser", null));
+        } else {
+            qb.or(createNode("targetUser", PARAM_DEFAULT_USER_ROLE));
         }
 
         String platformCode;
@@ -142,10 +150,13 @@ public class ContentProviderImpl implements ContentProvider {
             platformCode = PARAM_PLATFORM_ALL;
         }
 
-        if (platformCode != null && !platformCode.isEmpty()) {
+//        if (platformCode != null && !platformCode.isEmpty()) {
+        if (!platformCode.equals(PARAM_PLATFORM_ALL)) {
             qb.or(createNode("platform", platformCode),
                     createNode("platform", PARAM_DEFAULT_PLATFORM),
                     createNode("platform", null));
+        } else {
+            qb.or(createNode("platform", platformCode));
         }
 
         Sorting sorting = new Sorting();
