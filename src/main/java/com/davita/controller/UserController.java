@@ -1,9 +1,13 @@
 package com.davita.controller;
 
+import com.davita.exception.ApplicationException;
+import com.davita.exception.NotFoundException;
+import com.davita.exception.ValidationException;
 import com.davita.model.UserRepository;
 import com.davita.model.Content;
 import com.davita.model.ContentRepository;
 import com.davita.model.User;
+import com.davita.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +32,9 @@ public class UserController {
     private static final String CONTENT_ID_VALIDATION_ERROR = "Invalid contentId provided: ";
 
     @Autowired
+    private UserServiceImpl userService;
+
+    @Autowired
     private ContentRepository contentRepository;
 
     @Autowired
@@ -34,24 +42,20 @@ public class UserController {
 
     @RequestMapping("")
     public ResponseEntity<List<User>> getUsers() {
-
-        List<User> userList = new ArrayList<>();
-
-        Iterable<User> users = userRepository.findAll();
-
-        for (User user: users) {
-            userList.add(user);
-        }
-
-        return new ResponseEntity<>(userList, HttpStatus.OK);
+        return new ResponseEntity<>(userService.getAllUser(), HttpStatus.OK);
     }
 
 
     @RequestMapping("{userId}")
     public ResponseEntity<User> getUser(@PathVariable String userId) {
 
-        User user = userRepository.findByUid(userId).orElseThrow(() ->
-                new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId));
+        User user;
+
+        try {
+            user = userService.getUser(userId);
+        } catch (NotFoundException e) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
+        }
 
         return new ResponseEntity<>(user, HttpStatus.FOUND);
     }
@@ -60,8 +64,13 @@ public class UserController {
     @RequestMapping("{userId}/readArticles")
     public List<String> readArticles(@PathVariable String userId) {
 
-        User user = userRepository.findByUid(userId).orElseThrow(() ->
-                new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId));
+        User user;
+
+        try {
+            user = userService.getUser(userId);
+        } catch (NotFoundException e) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
+        }
 
         return user.getReadArticles();
     }
@@ -70,17 +79,12 @@ public class UserController {
     @RequestMapping(value = "{userId}/readArticles/{contentId}", method = RequestMethod.POST)
     public ResponseEntity readArticles(@PathVariable String userId, @PathVariable String contentId) {
 
-        Content content = contentRepository.findOne(contentId);
-
-        if (content != null) {
-
-            User user = userRepository.findByUid(userId).orElseThrow(() ->
-                    new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId));
-
-            user.addReadContent(content.getId());
-            userRepository.save(user);
-        } else {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, CONTENT_ID_VALIDATION_ERROR + contentId);
+        try {
+            userService.addReadArticle(userId, contentId);
+        } catch (NotFoundException e) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
+        } catch (ApplicationException e) {
+            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
         return new ResponseEntity<String>(HttpStatus.CREATED);
@@ -90,8 +94,13 @@ public class UserController {
     @RequestMapping("{userId}/likedArticles")
     public ResponseEntity<List<String>> likedArticles(@PathVariable String userId) {
 
-        User user = userRepository.findByUid(userId).orElseThrow(() ->
-                new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId));
+        User user;
+
+        try {
+            user = userService.getUser(userId);
+        } catch (NotFoundException e) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
+        }
 
         return new ResponseEntity<>(user.getLikedArticles(), HttpStatus.FOUND);
     }
@@ -100,15 +109,19 @@ public class UserController {
     @RequestMapping(value = "{userId}/likedArticles/{contentId}", method = RequestMethod.POST)
     public ResponseEntity likeArticles(@PathVariable String userId, @PathVariable String contentId) {
 
+        User user;
         Content content = contentRepository.findOne(contentId);
 
         if (content != null) {
 
-            User user = userRepository.findByUid(userId).orElseThrow(() ->
-                    new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId));
+            try {
+                user = userService.getUser(userId);
+                user.addlikedContent(content.getId());
+                userRepository.save(user);
+            } catch (NotFoundException e) {
+                throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
+            }
 
-            user.addlikedContent(content.getId());
-            userRepository.save(user);
         } else {
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, CONTENT_ID_VALIDATION_ERROR + contentId);
         }
@@ -120,10 +133,10 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity createUser(@RequestBody User user) {
 
-        if (userRepository.findByUid(user.getUid()).isPresent()) {
+        try {
+            userService.createUser(user);
+        } catch (ValidationException e) {
             throw new HttpClientErrorException(HttpStatus.CONFLICT, USER_ID_DUP_ERROR + user.getUid());
-        } else {
-            userRepository.save(user);
         }
 
         HttpHeaders headers = new HttpHeaders();
@@ -138,10 +151,12 @@ public class UserController {
     @RequestMapping(value = "{userId}", method = RequestMethod.DELETE)
     public ResponseEntity deleteUser(@PathVariable String userId) {
 
-        User user = userRepository.findByUid(userId).orElseThrow(() ->
-                new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId));
+        try {
+            userService.deleteUser(userId);
+        } catch (ValidationException e) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
+        }
 
-        userRepository.delete(user);
 
         return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
     }

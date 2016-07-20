@@ -1,7 +1,11 @@
 package com.davita.controller;
 
+import com.davita.exception.ApplicationException;
+import com.davita.exception.NotFoundException;
 import com.davita.service.ContentProvider;
 import com.davita.model.Content;
+import com.davita.service.ContentService;
+import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
@@ -37,7 +41,7 @@ public class ContentController {
     private static final String PARAM_DEFAULT_PLATFORM = PARAM_PLATFORM_ALL;
 
     @Autowired
-    private ContentProvider contentProvider;
+    private ContentService contentService;
 
     @RequestMapping("/contents")
     public List<Content> content(@RequestParam(value=PARAM_USER_ROLE, defaultValue= PARAM_DEFAULT_USER_ROLE) String userRole,
@@ -53,13 +57,10 @@ public class ContentController {
         List<Content> contents;
 
         try {
-//            ObjectNode query = QueryBuilder.start("_type").is("custom:needtoknow").get();
-//            ObjectNode query = QueryBuilder.start("_type").is("custom:actionitem0").get();
 
-            contents = contentProvider.getContentList(clientRole, clientPlatform, contentType);
+            contents = contentService.getContentList(clientRole, clientPlatform, contentType);
 
-        } catch (Exception e) {
-            System.out.println("Error: " + e.toString());
+        } catch (ApplicationException e) {
             throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
         }
 
@@ -73,9 +74,11 @@ public class ContentController {
         Content content = null;
 
         try {
-            content = contentProvider.getContent(contentId);
-        } catch (Exception e) {
-            System.out.println("Error: " + e.toString());
+            content = contentService.getContent(contentId);
+        }  catch (NotFoundException e) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, contentId);
+        } catch (ApplicationException e) {
+            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
         }
 
         return content;
@@ -88,9 +91,10 @@ public class ContentController {
         InputStream inputStream = null;
 
         try {
-            inputStream = contentProvider.getContentAttachment(contentId);
-        } catch (Exception e) {
-            System.out.println("Error: " + e.toString());
+            inputStream = contentService.getContentAttachment(contentId);
+        } catch (NotFoundException e) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, contentId);
+        } catch (ApplicationException e) {
             throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 

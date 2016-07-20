@@ -1,5 +1,6 @@
 package com.davita.service;
 
+import com.davita.exception.NotFoundException;
 import com.davita.model.Content;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.gitana.platform.client.Gitana;
@@ -22,6 +23,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by kmasood on 7/11/16.
@@ -29,11 +31,11 @@ import java.util.List;
 @Service("ContentProvider")
 public class ContentProviderImpl implements ContentProvider {
 
-    private static final String CMS_CLIENT_KEY = "asdasd";
-    private static final String CMS_CLIENT_SECRET = "ssdfsdfsdf";
-    private static final String CMS_USERNAME = "sdfsdf";
-    private static final String CMS_PASSWORD = "sdfsdf";
-    private static final String CMS_REPO_ID = "sdfsd";
+    private static final String CMS_CLIENT_KEY = "asdsadas";
+    private static final String CMS_CLIENT_SECRET = "asdasds";
+    private static final String CMS_USERNAME = "asdasdas";
+    private static final String CMS_PASSWORD = "asdasdsadas";
+    private static final String CMS_REPO_ID = "asdasd";
     private static final String CMS_REPO_BRANCH = "master";
 
     private static final String PARAM_CONTENT_ACTION_ITEMS = "ActionItems";
@@ -185,7 +187,7 @@ public class ContentProviderImpl implements ContentProvider {
     }
 
     @Override
-    public Content getContent(String contentId) {
+    public Content getContent(String contentId) throws NotFoundException {
         Content content = null;
 
         // I hate doing this but I have to!!! ugh
@@ -198,7 +200,7 @@ public class ContentProviderImpl implements ContentProvider {
         ResultMap results = masterRepo.queryNodes(query);
 
         if (results.isEmpty()) {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, CONTENT_ID_VALIDATION_ERROR + contentId);
+            throw new NotFoundException(CONTENT_ID_VALIDATION_ERROR + contentId);
         }
 
         for (Object obj: results.values()) {
@@ -213,7 +215,7 @@ public class ContentProviderImpl implements ContentProvider {
 
 
     @Override
-    public InputStream getContentAttachment(String contentId) {
+    public InputStream getContentAttachment(String contentId) throws NotFoundException {
         InputStream inputStream = null;
 
         // I hate doing this but I have to!!! ugh
@@ -226,7 +228,7 @@ public class ContentProviderImpl implements ContentProvider {
         ResultMap results = masterRepo.queryNodes(query);
 
         if (results.isEmpty()) {
-            throw new HttpClientErrorException(HttpStatus.NO_CONTENT, CONTENT_ID_VALIDATION_ERROR + contentId);
+            throw new NotFoundException(CONTENT_ID_VALIDATION_ERROR + contentId);
         }
 
         for (Object obj: results.values()) {
@@ -246,7 +248,7 @@ public class ContentProviderImpl implements ContentProvider {
 
 
     @Override
-    public InputStream getContentAttachmentPreview(String contentId) {
+    public InputStream getContentAttachmentPreview(String contentId) throws NotFoundException {
         InputStream inputStream = null;
 
         Remote remote = DriverContext.getDriver().getRemote();
@@ -261,7 +263,7 @@ public class ContentProviderImpl implements ContentProvider {
         ResultMap results = masterRepo.queryNodes(query);
 
         if (results.isEmpty()) {
-            throw new HttpClientErrorException(HttpStatus.NO_CONTENT, CONTENT_ID_VALIDATION_ERROR + contentId);
+            throw new NotFoundException(CONTENT_ID_VALIDATION_ERROR + contentId);
         }
 
         for (Object obj: results.values()) {
