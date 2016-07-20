@@ -1,4 +1,4 @@
-package com.davita.caas;
+package com.davita.service;
 
 import com.davita.model.Content;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -10,7 +10,6 @@ import org.gitana.platform.client.platform.Platform;
 import org.gitana.platform.client.repository.Repository;
 import org.gitana.platform.client.support.DriverContext;
 import org.gitana.platform.client.support.Remote;
-import org.gitana.platform.client.webhost.WebHost;
 import org.gitana.platform.support.Pagination;
 import org.gitana.platform.support.QueryBuilder;
 import org.gitana.platform.support.ResultMap;
@@ -30,11 +29,11 @@ import java.util.List;
 @Service("ContentProvider")
 public class ContentProviderImpl implements ContentProvider {
 
-    private static final String CMS_CLIENT_KEY = "2f673e6a-75a9-48cc-aac9-9f554cdbe44f";
-    private static final String CMS_CLIENT_SECRET = "suFq5O7fVMxkC0qBaH+ovKZVXdyTwJmPLQtHmqS6xhZDuBYKGtlq260F2Olju+5AWiEi02IsCRNes16O6Tl2QB+BqpSR83AGAyyrvUcufDI=";
-    private static final String CMS_USERNAME = "1107cf9b-466c-4d15-a1b0-cfac59c37844";
-    private static final String CMS_PASSWORD = "pIZrtwXPfJCXpGY6x+Z2dSRVlz6SG7Ucl2qUI6LcP3D5jHHfBulaHW2yP0cM+W/BG6cElXFGtTnWCaWukW3HkirfZVP4+XGyDjfL4IV5q2E=";
-    private static final String CMS_REPO_ID = "ebd5f0305492699d282b";
+    private static final String CMS_CLIENT_KEY = "asdasd";
+    private static final String CMS_CLIENT_SECRET = "ssdfsdfsdf";
+    private static final String CMS_USERNAME = "sdfsdf";
+    private static final String CMS_PASSWORD = "sdfsdf";
+    private static final String CMS_REPO_ID = "sdfsd";
     private static final String CMS_REPO_BRANCH = "master";
 
     private static final String PARAM_CONTENT_ACTION_ITEMS = "ActionItems";

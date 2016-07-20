@@ -1,6 +1,6 @@
 package com.davita.controller;
 
-import com.davita.caas.ContentProvider;
+import com.davita.service.ContentProvider;
 import com.davita.model.Content;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;

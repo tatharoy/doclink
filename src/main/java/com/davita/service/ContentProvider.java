@@ -1,4 +1,4 @@
-package com.davita.caas;
+package com.davita.service;
 
 import com.davita.model.Content;
 
