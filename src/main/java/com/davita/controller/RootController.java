@@ -1,4 +1,4 @@
-package com.davita;
+package com.davita.controller;
 
 
 import org.springframework.web.bind.annotation.RequestMapping;

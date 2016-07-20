@@ -1,5 +1,6 @@
-package com.davita;
+package com.davita.model;
 
+import com.davita.model.User;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

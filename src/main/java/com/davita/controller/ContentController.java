@@ -1,17 +1,7 @@
-package com.davita;
+package com.davita.controller;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.gitana.platform.client.Gitana;
-import org.gitana.platform.client.attachment.Attachment;
-import org.gitana.platform.client.branch.Branch;
-import org.gitana.platform.client.node.Node;
-import org.gitana.platform.client.platform.Platform;
-import org.gitana.platform.client.repository.Repository;
-import org.gitana.platform.support.Pagination;
-import org.gitana.platform.support.QueryBuilder;
-import org.gitana.platform.support.ResultMap;
-import org.gitana.platform.support.Sorting;
-import org.gitana.util.JsonUtil;
+import com.davita.caas.ContentProvider;
+import com.davita.model.Content;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
@@ -24,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

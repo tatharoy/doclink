@@ -1,4 +1,4 @@
-package com.davita;
+package com.davita.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

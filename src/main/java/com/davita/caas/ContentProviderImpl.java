@@ -1,5 +1,6 @@
-package com.davita;
+package com.davita.caas;
 
+import com.davita.model.Content;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.gitana.platform.client.Gitana;
 import org.gitana.platform.client.attachment.Attachment;
@@ -7,6 +8,9 @@ import org.gitana.platform.client.branch.Branch;
 import org.gitana.platform.client.node.Node;
 import org.gitana.platform.client.platform.Platform;
 import org.gitana.platform.client.repository.Repository;
+import org.gitana.platform.client.support.DriverContext;
+import org.gitana.platform.client.support.Remote;
+import org.gitana.platform.client.webhost.WebHost;
 import org.gitana.platform.support.Pagination;
 import org.gitana.platform.support.QueryBuilder;
 import org.gitana.platform.support.ResultMap;
@@ -19,7 +23,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by kmasood on 7/11/16.
@@ -70,12 +73,9 @@ public class ContentProviderImpl implements ContentProvider {
 
 
     private void createCaaSConnction() {
-        // these values come from your API Keys
-        String clientKey = CMS_CLIENT_KEY;
-        String clientSecret = CMS_CLIENT_SECRET;
-
         // connect as to Cloud CMS as your tenant and user
-        gitana = new Gitana(clientKey, clientSecret);
+        gitana = new Gitana(CMS_CLIENT_KEY, CMS_CLIENT_SECRET);
+
         platform = gitana.authenticate(username, password);
 
         // read from the main repository
@@ -216,6 +216,41 @@ public class ContentProviderImpl implements ContentProvider {
     @Override
     public InputStream getContentAttachment(String contentId) {
         InputStream inputStream = null;
+
+        // I hate doing this but I have to!!! ugh
+        createCaaSConnction();
+
+        QueryBuilder qb = QueryBuilder.start("_doc").is(contentId);
+
+        ObjectNode query = qb.get();
+
+        ResultMap results = masterRepo.queryNodes(query);
+
+        if (results.isEmpty()) {
+            throw new HttpClientErrorException(HttpStatus.NO_CONTENT, CONTENT_ID_VALIDATION_ERROR + contentId);
+        }
+
+        for (Object obj: results.values()) {
+            Node node = (Node)obj;
+
+            ResultMap<Attachment> attachmentList = node.listAttachments();
+
+            for (Attachment attachment: attachmentList.values()) {
+                if (attachment.getId().equalsIgnoreCase("_preview_default_icon48_48")) {
+                    inputStream = attachment.getInputStream();
+                }
+            }
+        }
+
+        return inputStream;
+    }
+
+
+    @Override
+    public InputStream getContentAttachmentPreview(String contentId) {
+        InputStream inputStream = null;
+
+        Remote remote = DriverContext.getDriver().getRemote();
 
         // I hate doing this but I have to!!! ugh
         createCaaSConnction();

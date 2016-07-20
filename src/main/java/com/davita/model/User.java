@@ -1,4 +1,6 @@
-package com.davita;
+package com.davita.model;
+
+import com.davita.model.Content;
 
 import javax.persistence.*;
 import java.util.ArrayList;

@@ -1,5 +1,6 @@
-package com.davita;
+package com.davita.model;
 
+import com.davita.model.Content;
 import org.springframework.data.repository.CrudRepository;
 
 /**

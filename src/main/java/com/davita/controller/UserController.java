@@ -1,5 +1,9 @@
-package com.davita;
+package com.davita.controller;
 
+import com.davita.model.UserRepository;
+import com.davita.model.Content;
+import com.davita.model.ContentRepository;
+import com.davita.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
