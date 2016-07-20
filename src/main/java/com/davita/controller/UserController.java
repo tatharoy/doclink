@@ -55,6 +55,8 @@ public class UserController {
             user = userService.getUser(userId);
         } catch (NotFoundException e) {
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
+        } catch (Exception e) {
+            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
         }
 
         return new ResponseEntity<>(user, HttpStatus.FOUND);
@@ -70,6 +72,8 @@ public class UserController {
             user = userService.getUser(userId);
         } catch (NotFoundException e) {
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
+        } catch (Exception e) {
+            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
         }
 
         return user.getReadArticles();
@@ -85,6 +89,8 @@ public class UserController {
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
         } catch (ApplicationException e) {
             throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        } catch (Exception e) {
+            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
         }
 
         return new ResponseEntity<String>(HttpStatus.CREATED);
@@ -100,6 +106,8 @@ public class UserController {
             user = userService.getUser(userId);
         } catch (NotFoundException e) {
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
+        } catch (Exception e) {
+            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
         }
 
         return new ResponseEntity<>(user.getLikedArticles(), HttpStatus.FOUND);
@@ -109,22 +117,15 @@ public class UserController {
     @RequestMapping(value = "{userId}/likedArticles/{contentId}", method = RequestMethod.POST)
     public ResponseEntity likeArticles(@PathVariable String userId, @PathVariable String contentId) {
 
-        User user;
-        Content content = contentRepository.findOne(contentId);
-
-        if (content != null) {
-
             try {
-                user = userService.getUser(userId);
-                user.addlikedContent(content.getId());
-                userRepository.save(user);
+                userService.addLikedArticle(userId, contentId);
             } catch (NotFoundException e) {
                 throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
+            } catch (ApplicationException e) {
+                throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
+            } catch (Exception e) {
+                throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
             }
-
-        } else {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, CONTENT_ID_VALIDATION_ERROR + contentId);
-        }
 
         return new ResponseEntity<String>(HttpStatus.CREATED);
     }
@@ -137,6 +138,8 @@ public class UserController {
             userService.createUser(user);
         } catch (ValidationException e) {
             throw new HttpClientErrorException(HttpStatus.CONFLICT, USER_ID_DUP_ERROR + user.getUid());
+        } catch (Exception e) {
+            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
         }
 
         HttpHeaders headers = new HttpHeaders();
@@ -155,8 +158,9 @@ public class UserController {
             userService.deleteUser(userId);
         } catch (ValidationException e) {
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
+        } catch (Exception e) {
+            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
         }
-
 
         return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
     }

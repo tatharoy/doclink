@@ -62,6 +62,8 @@ public class ContentController {
 
         } catch (ApplicationException e) {
             throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
+        } catch (Exception e) {
+            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
         }
 
         return contents;
@@ -78,6 +80,8 @@ public class ContentController {
         }  catch (NotFoundException e) {
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, contentId);
         } catch (ApplicationException e) {
+            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
+        } catch (Exception e) {
             throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
         }
 
@@ -96,6 +100,8 @@ public class ContentController {
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, contentId);
         } catch (ApplicationException e) {
             throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
         }
 
         return ResponseEntity.ok()
