@@ -16,6 +16,7 @@ import org.gitana.platform.support.QueryBuilder;
 import org.gitana.platform.support.ResultMap;
 import org.gitana.platform.support.Sorting;
 import org.gitana.util.JsonUtil;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -29,14 +30,8 @@ import java.util.Optional;
  * Created by kmasood on 7/11/16.
  */
 @Service("ContentProvider")
+@ConfigurationProperties
 public class ContentProviderImpl implements ContentProvider {
-
-    private static final String CMS_CLIENT_KEY = "asdsadas";
-    private static final String CMS_CLIENT_SECRET = "asdasds";
-    private static final String CMS_USERNAME = "asdasdas";
-    private static final String CMS_PASSWORD = "asdasdsadas";
-    private static final String CMS_REPO_ID = "asdasd";
-    private static final String CMS_REPO_BRANCH = "master";
 
     private static final String PARAM_CONTENT_ACTION_ITEMS = "ActionItems";
     private static final String PARAM_CONTENT_NEED_TO_KNOW = "NeedToKnow";
@@ -69,21 +64,40 @@ public class ContentProviderImpl implements ContentProvider {
     private Repository repository;
     private Branch masterRepo;
 
-    private String username = CMS_USERNAME;
-    private String password = CMS_PASSWORD;
+    private String clientKey;
+    private String clientSecret;
+    private String username;
+    private String password;
+    private String repoId;
+    private String repoRepoBranch;
 
+    //
+    // Property values. These are injected from the application.properties file
+    //
+    public String getClientKey() { return clientKey; }
+    public void setClientKey(String clientKey) { this.clientKey = clientKey; }
+    public String getClientSecret() { return clientSecret; }
+    public void setClientSecret(String clientSecret) { this.clientSecret = clientSecret; }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+    public String getRepoId() { return repoId; }
+    public void setRepoId(String repoId) { this.repoId = repoId; }
+    public String getRepoRepoBranch() { return repoRepoBranch; }
+    public void setRepoRepoBranch(String repoRepoBranch) { this.repoRepoBranch = repoRepoBranch; }
 
     private void createCaaSConnction() {
         // connect as to Cloud CMS as your tenant and user
-        gitana = new Gitana(CMS_CLIENT_KEY, CMS_CLIENT_SECRET);
+        gitana = new Gitana(clientKey, clientSecret);
 
         platform = gitana.authenticate(username, password);
 
         // read from the main repository
-        repository = platform.readRepository(CMS_REPO_ID);
+        repository = platform.readRepository(repoId);
 
         // point to the main branch of the repository
-        masterRepo = repository.readBranch(CMS_REPO_BRANCH);
+        masterRepo = repository.readBranch(repoRepoBranch);
     }
 
 
