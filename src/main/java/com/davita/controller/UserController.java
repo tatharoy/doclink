@@ -3,9 +3,6 @@ package com.davita.controller;
 import com.davita.exception.ApplicationException;
 import com.davita.exception.NotFoundException;
 import com.davita.exception.ValidationException;
-import com.davita.model.UserRepository;
-import com.davita.model.Content;
-import com.davita.model.ContentRepository;
 import com.davita.model.User;
 import com.davita.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,16 +24,9 @@ public class UserController {
 
     private static final String USER_ID_VALIDATION_ERROR = "Invalid userId provided: ";
     private static final String USER_ID_DUP_ERROR = "UserId already provisioned in system: ";
-    private static final String CONTENT_ID_VALIDATION_ERROR = "Invalid contentId provided: ";
 
     @Autowired
     private UserServiceImpl userService;
-
-    @Autowired
-    private ContentRepository contentRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @RequestMapping("")
     public ResponseEntity<List<User>> getUsers() {
