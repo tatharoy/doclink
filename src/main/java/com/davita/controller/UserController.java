@@ -22,134 +22,71 @@ import java.util.List;
 @RequestMapping("users")
 public class UserController {
 
-    private static final String USER_ID_VALIDATION_ERROR = "Invalid userId provided: ";
-    private static final String USER_ID_DUP_ERROR = "UserId already provisioned in system: ";
-
-    @Autowired
-    private UserServiceImpl userService;
-
-    @RequestMapping("")
-    public ResponseEntity<List<User>> getUsers() {
-        return new ResponseEntity<>(userService.getAllUser(), HttpStatus.OK);
-    }
 
 
-    @RequestMapping("{userId}")
-    public ResponseEntity<User> getUser(@PathVariable String userId) {
+	@Autowired
+	private UserServiceImpl userService;
 
-        User user;
+	@RequestMapping("")
+	public ResponseEntity<List<User>> getUsers() {
+		return new ResponseEntity<>(userService.getAllUser(), HttpStatus.OK);
+	}
 
-        try {
-            user = userService.getUser(userId);
-        } catch (NotFoundException e) {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
-        } catch (Exception e) {
-            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
-        }
+	@RequestMapping("{userId}")
+	public ResponseEntity<User> getUser(@PathVariable String userId) {
 
-        return new ResponseEntity<>(user, HttpStatus.FOUND);
-    }
+		User user = userService.getUser(userId);
+		return new ResponseEntity<>(user, HttpStatus.FOUND);
+	}
 
+	@RequestMapping("{userId}/readArticles")
+	public List<String> readArticles(@PathVariable String userId) {
 
-    @RequestMapping("{userId}/readArticles")
-    public List<String> readArticles(@PathVariable String userId) {
+		User user = userService.getUser(userId);
 
-        User user;
+		return user.getReadArticles();
+	}
 
-        try {
-            user = userService.getUser(userId);
-        } catch (NotFoundException e) {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
-        } catch (Exception e) {
-            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
-        }
+	@RequestMapping(value = "{userId}/readArticles/{contentId}", method = RequestMethod.POST)
+	public ResponseEntity readArticles(@PathVariable String userId, @PathVariable String contentId) {
 
-        return user.getReadArticles();
-    }
+		userService.addReadArticle(userId, contentId);
 
+		return new ResponseEntity<String>(HttpStatus.CREATED);
+	}
 
-    @RequestMapping(value = "{userId}/readArticles/{contentId}", method = RequestMethod.POST)
-    public ResponseEntity readArticles(@PathVariable String userId, @PathVariable String contentId) {
+	@RequestMapping("{userId}/likedArticles")
+	public ResponseEntity<List<String>> likedArticles(@PathVariable String userId) {
 
-        try {
-            userService.addReadArticle(userId, contentId);
-        } catch (NotFoundException e) {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
-        } catch (ApplicationException e) {
-            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-        } catch (Exception e) {
-            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
-        }
+		User user = userService.getUser(userId);
 
-        return new ResponseEntity<String>(HttpStatus.CREATED);
-    }
+		return new ResponseEntity<>(user.getLikedArticles(), HttpStatus.FOUND);
+	}
 
+	@RequestMapping(value = "{userId}/likedArticles/{contentId}", method = RequestMethod.POST)
+	public ResponseEntity likeArticles(@PathVariable String userId, @PathVariable String contentId) {
 
-    @RequestMapping("{userId}/likedArticles")
-    public ResponseEntity<List<String>> likedArticles(@PathVariable String userId) {
+		userService.addLikedArticle(userId, contentId);
 
-        User user;
+		return new ResponseEntity<String>(HttpStatus.CREATED);
+	}
 
-        try {
-            user = userService.getUser(userId);
-        } catch (NotFoundException e) {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
-        } catch (Exception e) {
-            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
-        }
+	@RequestMapping(method = RequestMethod.POST)
+	public ResponseEntity createUser(@RequestBody User user) {
 
-        return new ResponseEntity<>(user.getLikedArticles(), HttpStatus.FOUND);
-    }
+		userService.createUser(user);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setLocation(
+				ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getUid()).toUri());
 
+		return new ResponseEntity<String>(null, headers, HttpStatus.CREATED);
+	}
 
-    @RequestMapping(value = "{userId}/likedArticles/{contentId}", method = RequestMethod.POST)
-    public ResponseEntity likeArticles(@PathVariable String userId, @PathVariable String contentId) {
+	@RequestMapping(value = "{userId}", method = RequestMethod.DELETE)
+	public ResponseEntity deleteUser(@PathVariable String userId) {
 
-            try {
-                userService.addLikedArticle(userId, contentId);
-            } catch (NotFoundException e) {
-                throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
-            } catch (ApplicationException e) {
-                throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
-            } catch (Exception e) {
-                throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
-            }
+		userService.deleteUser(userId);
 
-        return new ResponseEntity<String>(HttpStatus.CREATED);
-    }
-
-
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity createUser(@RequestBody User user) {
-
-        try {
-            userService.createUser(user);
-        } catch (ValidationException e) {
-            throw new HttpClientErrorException(HttpStatus.CONFLICT, USER_ID_DUP_ERROR + user.getUid());
-        } catch (Exception e) {
-            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
-        }
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(ServletUriComponentsBuilder
-                .fromCurrentRequest().path("/{id}")
-                .buildAndExpand(user.getUid()).toUri());
-
-        return new ResponseEntity<String>(null, headers, HttpStatus.CREATED);
-    }
-
-
-    @RequestMapping(value = "{userId}", method = RequestMethod.DELETE)
-    public ResponseEntity deleteUser(@PathVariable String userId) {
-
-        try {
-            userService.deleteUser(userId);
-        } catch (ValidationException e) {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, USER_ID_VALIDATION_ERROR + userId);
-        } catch (Exception e) {
-            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
-        }
-
-        return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
-    }
+		return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+	}
 }
